@@ -1,0 +1,61 @@
+@keyframes slide-in {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 142%;
+  }
+}
+
+.container {
+  text-align: center;
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.file-input {
+  display: block;
+  margin: 10px auto;
+}
+
+.buttons {
+  margin-top: 10px;
+}
+
+.block {
+  position: absolute;
+  display: inline-block;
+}
+
+.block::before,
+.block::after {
+  content: "";
+  position: absolute;
+  height: 1px;
+  width: 0%;
+  background-color: var(--pixel-color, transparent);
+  animation: slide-in 0.3s forwards;
+}
+
+.block::before {
+  top: 0;
+  left: 0;
+  transform: rotate(45deg);
+  transform-origin: left top;
+}
+
+.block::after {
+  top: 0;
+  right: 0;
+  transform: rotate(-45deg);
+  transform-origin: right top;
+  animation-delay: 0.3s;
+}
