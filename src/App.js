@@ -13,6 +13,7 @@ const FIXED_SIZE = 400;
 const PixelatedImage = () => {
   const [image, setImage] = useState(null);
   const [pixelSize, setPixelSize] = useState(10);
+  const [strokeWidth, setStrokeWidth] = useState(10);
   const [fillMode, setFillMode] = useState("random");
   const [speed, setSpeed] = useState(5);
   const [applyPixelation, setApplyPixelation] = useState(false);
@@ -74,22 +75,37 @@ const PixelatedImage = () => {
             data[idx + 3] / 255
           })`;
 
-          const pixelDiv = document.createElement("div");
-          pixelDiv.style.setProperty("--pixel-color", color);
-          pixelDiv.className = "block";
-          Object.assign(pixelDiv.style, {
+          const svgElement = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+          );
+          svgElement.setAttribute("width", pixelSize);
+          svgElement.setAttribute("height", pixelSize);
+          svgElement.setAttribute("viewBox", "0 0 200 200");
+
+          svgElement.innerHTML = `
+            <line x1="0" y1="0" x2="0" y2="0" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round">
+              <animate attributeName="x2" from="0" to="200" dur="0.5s" begin="0s" fill="freeze" />
+              <animate attributeName="y2" from="0" to="200" dur="0.5s" begin="0s" fill="freeze" />
+            </line>
+            <line x1="200" y1="0" x2="200" y2="0" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round">
+              <animate attributeName="x2" from="200" to="0" dur="0.5s" begin="0.5s" fill="freeze" />
+              <animate attributeName="y2" from="0" to="200" dur="0.5s" begin="0.5s" fill="freeze" />
+            </line>
+          `;
+
+          Object.assign(svgElement.style, {
+            position: "absolute",
             left: `${x}px`,
             top: `${y}px`,
-            width: `${pixelSize}px`,
-            height: `${pixelSize}px`,
           });
-          container.appendChild(pixelDiv);
+          container.appendChild(svgElement);
         }
         if (index < sortedPixels.length) requestAnimationFrame(render);
       };
       requestAnimationFrame(render);
     };
-  }, [image, pixelSize, fillMode, speed, applyPixelation, sortedPixels]);
+  }, [image, pixelSize, fillMode, speed, applyPixelation, sortedPixels, strokeWidth]);
 
   return (
     <div className="container">
@@ -117,6 +133,13 @@ const PixelatedImage = () => {
         max={50}
         step={1}
         onChange={(_, v) => setPixelSize(v)}
+      />
+      <Slider
+        value={strokeWidth}
+        min={1}
+        max={20}
+        step={1}
+        onChange={(_, v) => setStrokeWidth(v)}
       />
       <Slider
         value={speed}
